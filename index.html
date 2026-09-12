@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Limit Store | ຮ້ານເສື້ອຜ້າ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,"Noto Sans Lao",sans-serif;background:#f6f6f6;color:#111}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:0}
+.header{position:sticky;top:0;z-index:50;background:#111;color:#fff;padding:14px 5%;display:flex;align-items:center;gap:25px}
+.logo{font-size:25px;font-weight:900;letter-spacing:2px}
+.nav{display:flex;gap:18px;margin-left:auto}
+.nav a{font-size:14px}
+.nav a:hover{color:#aaa}
+.cart-btn{background:#fff;color:#111;padding:9px 14px;border-radius:20px;font-weight:bold}
+.page{display:none}
+.page.active{display:block}
+.hero{min-height:390px;background:linear-gradient(120deg,#111,#333);color:#fff;display:flex;align-items:center;padding:55px 7%}
+.hero-content{max-width:650px}
+.hero h1{font-size:58px;line-height:1;margin-bottom:18px}
+.hero p{font-size:18px;color:#ddd;margin-bottom:25px}
+.btn{padding:13px 22px;border-radius:7px;font-weight:bold}
+.btn-white{background:#fff;color:#111}
+.btn-black{background:#111;color:#fff}
+.section{padding:45px 6%;max-width:1300px;margin:auto}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.section-title h2{font-size:28px}
+.categories{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:25px}
+.cat{padding:10px 18px;background:#fff;border:1px solid #ddd;border-radius:22px}
+.cat.active,.cat:hover{background:#111;color:#fff}
+.search{width:100%;padding:14px;border:1px solid #ddd;border-radius:8px;margin-bottom:20px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 3px 15px #0000000d}
+.card-img{height:280px;background:#e9e9e9;display:flex;align-items:center;justify-content:center;color:#888;position:relative}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-body{padding:15px}
+.card h3{font-size:16px;margin-bottom:8px}
+.old{color:#999;text-decoration:line-through;font-size:13px}
+.price{font-size:19px;font-weight:900;margin:4px 0 12px}
+.card-actions{display:flex;gap:8px}
+.card-actions button{flex:1;padding:10px;border-radius:6px}
+.buy{background:#111;color:#fff}
+.add{background:#eee}
+.badge{position:absolute;top:10px;left:10px;background:#111;color:#fff;padding:6px 9px;border-radius:5px;font-size:12px}
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.detail-img{height:520px;background:#e9e9e9;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#888}
+.detail-img img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.detail h1{font-size:35px;margin-bottom:10px}
+.detail .price{font-size:28px;margin:18px 0}
+.option{margin:18px 0}
+.option label{display:block;font-weight:bold;margin-bottom:8px}
+.option select,.option input{padding:12px;width:100%;border:1px solid #ddd;border-radius:7px}
+.qty{display:flex;align-items:center;gap:10px}
+.qty input{width:80px}
+.form{background:#fff;padding:25px;border-radius:12px;max-width:800px;margin:auto}
+.form h2{margin-bottom:20px}
+.form label{display:block;font-weight:bold;margin:14px 0 7px}
+.form input,.form select,.form textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:7px;font-size:15px}
+.form textarea{min-height:90px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.slip{border:2px dashed #bbb;padding:20px;text-align:center;border-radius:8px}
+.preview{max-width:220px;max-height:220px;margin:15px auto;display:block}
+.cart-box{background:#fff;padding:20px;border-radius:12px}
+.cart-row{display:flex;align-items:center;gap:15px;border-bottom:1px solid #eee;padding:15px 0}
+.cart-row img{width:70px;height:70px;object-fit:cover;background:#eee;border-radius:7px}
+.cart-row .grow{flex:1}
+.total{text-align:right;font-size:22px;font-weight:bold;margin:20px 0}
+.empty{text-align:center;padding:50px;color:#777}
+.footer{background:#111;color:#fff;padding:35px 6%;margin-top:30px}
+.footer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:25px}
+.footer h3{margin-bottom:10px}
+.footer p{color:#bbb;margin:6px 0}
+.notice{background:#fff3cd;padding:13px;border-radius:7px;margin-bottom:18px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.detail{grid-template-columns:1fr}.detail-img{height:380px}.nav{gap:9px}.hero h1{font-size:43px}}
+@media(max-width:600px){.header{padding:12px 4%;gap:10px}.logo{font-size:20px}.nav a{display:none}.grid{grid-template-columns:1fr 1fr;gap:10px}.card-img{height:210px}.section{padding:30px 4%}.two,.footer-grid{grid-template-columns:1fr}.hero{min-height:330px;padding:40px 6%}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">LIMIT STORE</div>
+  <nav class="nav">
+    <a href="#" onclick="showPage('home')">ໜ້າຫຼັກ</a>
+    <a href="#" onclick="showPage('shop')">ໜ້າຮ້ານ</a>
+    <a href="#" onclick="showPage('order')">ສັ່ງຊື້</a>
+  </nav>
+  <button class="cart-btn" onclick="showPage('cart')">🛒 ກະຕ່າ (<span id="cartCount">0</span>)</button>
+</header>
+
+<main>
+<section id="home" class="page active">
+  <div class="hero">
+    <div class="hero-content">
+      <h1>LIMIT STORE</h1>
+      <p>ແຟຊັ່ນສະຕາຍ Streetwear ເລືອກເຄື່ອງທີ່ເຂົ້າກັບສະຕາຍຂອງເຈົ້າ.</p>
+      <button class="btn btn-white" onclick="showPage('shop')">ເຂົ້າເບິ່ງໜ້າຮ້ານ →</button>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title"><h2>🔥 ສິນຄ້າແນະນຳ</h2></div>
+    <div id="homeProducts" class="grid"></div>
+  </div>
+</section>
+
+<section id="shop" class="page">
+  <div class="section">
+    <div class="section-title">
+      <h2>🛍️ ໜ້າຮ້ານ</h2>
+    </div>
+    <input id="search" class="search" placeholder="🔎 ຄົ້ນຫາສິນຄ້າ..." oninput="renderShop()">
+    <div class="categories">
+      <button class="cat active" onclick="setCat('all',this)">ທັງໝົດ</button>
+      <button class="cat" onclick="setCat('shirt',this)">👕 ເສື້ອ</button>
+      <button class="cat" onclick="setCat('pants',this)">👖 ໂສ້ງ</button>
+      <button class="cat" onclick="setCat('shoe',this)">👟 ເກີບ</button>
+      <button class="cat" onclick="setCat('bag',this)">🎒 ກະເປົາ</button>
+    </div>
+    <div id="shopProducts" class="grid"></div>
+  </div>
+</section>
+
+<section id="product" class="page">
+  <div class="section">
+    <div id="productDetail"></div>
+  </div>
+</section>
+
+<section id="cart" class="page">
+  <div class="section">
+    <div class="section-title"><h2>🛒 ກະຕ່າສິນຄ້າ</h2></div>
+    <div id="cartBox" class="cart-box"></div>
+  </div>
+</section>
+
+<section id="order" class="page">
+  <div class="section">
+    <div class="form">
+      <h2>📦 ສັ່ງຊື້ / ແຈ້ງໂອນ</h2>
+      <div class="notice">ກະລຸນາກວດຊື່, ເບີໂທ ແລະ ທີ່ຢູ່ໃຫ້ຖືກຕ້ອງກ່ອນສົ່ງອໍເດີ.</div>
+      <label>ສິນຄ້າ</label>
+      <div id="orderItems"></div>
+      <div class="two">
+        <div><label>ຜູ້ຮັບ *</label><input id="name" required placeholder="ຊື່ຜູ້ຮັບ"></div>
+        <div><label>ເບີໂທ *</label><input id="phone" required placeholder="020..."></div>
+      </div>
+      <div class="two">
+        <div><label>ສາຂາ *</label><input id="branch" required placeholder="ສາຂາຮັບ/ສົ່ງ"></div>
+        <div><label>ບ້ານ *</label><input id="village" required placeholder="ບ້ານ"></div>
+      </div>
+      <div class="two">
+        <div><label>ເມືອງ *</label><input id="district" required placeholder="ເມືອງ"></div>
+        <div><label>ແຂວງ *</label><input id="province" required placeholder="ແຂວງ"></div>
+      </div>
+      <label>ວິທີຂົນສົ່ງ *</label>
+      <select id="shipping">
+        <option>ຮັບທີ່ສາຂາ</option><option>ສົ່ງເຖິງບ້ານ</option>
+      </select>
+      <label>ຂໍ້ມູນການໂອນ</label>
+      <input id="transfer" placeholder="ເຊັ່ນ: ຈຳນວນເງິນ / ເວລາໂອນ">
+      <label>📷 ອັບໂຫຼດໃບໂອນ</label>
+      <div class="slip">
+        <input id="slip" type="file" accept="image/*" onchange="previewSlip(event)">
+        <img id="slipPreview" class="preview" style="display:none">
+      </div>
+      <label>ໝາຍເຫດ</label>
+      <textarea id="note" placeholder="ເຊັ່ນ: ຂໍໂທກ່ອນສົ່ງ..."></textarea>
+      <button class="btn btn-black" style="width:100%;margin-top:20px" onclick="submitOrder()">✅ ຢືນຢັນສັ່ງຊື້</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div><h3>LIMIT STORE</h3><p>Streetwear & Fashion</p></div>
+    <div><h3>ເມນູ</h3><p>ໜ້າຫຼັກ • ໜ້າຮ້ານ • ກະຕ່າ</p></div>
+    <div><h3>ຕິດຕໍ່</h3><p>Facebook: Limit Store</p><p>Tel: 020 XX XXX XXX</p></div>
+  </div>
+</footer>
+
+<script>
+// ==========================
+// ✏️ ຈຸດທີ່ແກ້ສິນຄ້າໄດ້ງ່າຍ
+// ປ່ຽນຊື່, ລາຄາ ແລະຊື່ຮູບຢູ່ບ່ອນນີ້
+// ==========================
+const products = [
+ {id:1,name:"LIMIT Oversize T-Shirt",price:199000,oldPrice:370000,type:"shirt",image:"product1.jpg"},
+ {id:2,name:"Street Cargo Pants",price:249000,oldPrice:320000,type:"pants",image:"product2.jpg"},
+ {id:3,name:"Classic Street Shoes",price:399000,oldPrice:450000,type:"shoe",image:"product3.jpg"},
+ {id:4,name:"Urban Shoulder Bag",price:179000,oldPrice:230000,type:"bag",image:"product4.jpg"},
+ {id:5,name:"Basic Logo T-Shirt",price:159000,oldPrice:220000,type:"shirt",image:"product5.jpg"},
+ {id:6,name:"Wide Leg Pants",price:229000,oldPrice:290000,type:"pants",image:"product6.jpg"},
+ {id:7,name:"Daily Sneaker",price:349000,oldPrice:420000,type:"shoe",image:"product7.jpg"},
+ {id:8,name:"Mini Crossbody Bag",price:149000,oldPrice:190000,type:"bag",image:"product8.jpg"}
+];
+
+let cart = JSON.parse(localStorage.getItem("limitCart") || "[]");
+let currentCat = "all";
+
+const money = n => n.toLocaleString("en-US") + " ກີບ";
+
+function card(p){
+ return `<div class="card">
+   <div class="card-img">
+     <span class="badge">PROMO</span>
+     <img src="${p.image}" alt="${p.name}" onerror="this.style.display='none'">
+   </div>
+   <div class="card-body">
+     <h3>${p.name}</h3>
+     <div class="old">${money(p.oldPrice)}</div>
+     <div class="price">${money(p.price)}</div>
+     <div class="card-actions">
+       <button class="add" onclick="addCart(${p.id})">🛒 ໃສ່ກະຕ່າ</button>
+       <button class="buy" onclick="openProduct(${p.id})">ເບິ່ງ</button>
+     </div>
+   </div>
+ </div>`;
+}
+
+function renderHome(){
+ document.getElementById("homeProducts").innerHTML=products.slice(0,4).map(card).join("");
+}
+
+function renderShop(){
+ const q=(document.getElementById("search").value||"").toLowerCase();
+ const list=products.filter(p=>(currentCat==="all"||p.type===currentCat)&&p.name.toLowerCase().includes(q));
+ document.getElementById("shopProducts").innerHTML=list.length?list.map(card).join(""):`<div class="empty" style="grid-column:1/-1">ບໍ່ພົບສິນຄ້າ</div>`;
+}
+
+function setCat(cat,btn){
+ currentCat=cat;
+ document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+ renderShop();
+}
+
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ if(id==="shop") renderShop();
+ if(id==="cart") renderCart();
+ if(id==="order") renderOrder();
+ window.scrollTo(0,0);
+}
+
+function openProduct(id){
+ const p=products.find(x=>x.id===id);
+ document.getElementById("productDetail").innerHTML=`
+ <div class="detail">
+  <div class="detail-img"><img src="${p.image}" alt="${p.name}" onerror="this.style.display='none'"></div>
+  <div>
+   <button class="btn" onclick="showPage('shop')">← ກັບໜ້າຮ້ານ</button>
+   <h1>${p.name}</h1>
+   <div class="old">${money(p.oldPrice)}</div>
+   <div class="price">${money(p.price)}</div>
+   <p>ສິນຄ້າຄຸນນະພາບ ສຳລັບສາຍ Streetwear.</p>
+   <div class="option"><label>ສີ</label><select><option>ດຳ</option><option>ຂາວ</option><option>ເທົາ</option></select></div>
+   <div class="option"><label>ໄຊສ໌</label><select><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></div>
+   <button class="btn btn-black" onclick="addCart(${p.id});showPage('cart')" style="width:100%">🛒 ຊື້ສິນຄ້ານີ້</button>
+  </div>
+ </div>`;
+ showPage("product");
+}
+
+function addCart(id){
+ const p=products.find(x=>x.id===id);
+ const found=cart.find(x=>x.id===id);
+ if(found) found.qty++;
+ else cart.push({id:p.id,qty:1});
+ saveCart();
+ alert("ເພີ່ມເຂົ້າກະຕ່າແລ້ວ ✅");
+}
+
+function saveCart(){
+ localStorage.setItem("limitCart",JSON.stringify(cart));
+ document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);
+}
+
+function renderCart(){
+ const box=document.getElementById("cartBox");
+ if(!cart.length){box.innerHTML=`<div class="empty">ຍັງບໍ່ມີສິນຄ້າໃນກະຕ່າ 🛒<br><br><button class="btn btn-black" onclick="showPage('shop')">ໄປເລືອກສິນຄ້າ</button></div>`;return;}
+ let total=0;
+ box.innerHTML=cart.map(x=>{
+  const p=products.find(z=>z.id===x.id); total+=p.price*x.qty;
+  return `<div class="cart-row"><img src="${p.image}" onerror="this.style.display='none'"><div class="grow"><b>${p.name}</b><br>${money(p.price)} × ${x.qty}</div><button onclick="removeCart(${p.id})">🗑️</button></div>`;
+ }).join("")+
+ `<div class="total">ລວມ: ${money(total)}</div><button class="btn btn-black" style="width:100%" onclick="showPage('order')">📦 ໄປສັ່ງຊື້</button>`;
+}
+
+function removeCart(id){
+ cart=cart.filter(x=>x.id!==id);saveCart();renderCart();
+}
+
+function renderOrder(){
+ const box=document.getElementById("orderItems");
+ if(!cart.length){box.innerHTML="<p>ກະຕ່າວ່າງ — ກະລຸນາໄປເລືອກສິນຄ້າກ່ອນ.</p>";return;}
+ box.innerHTML=cart.map(x=>{const p=products.find(z=>z.id===x.id);return `<p>• ${p.name} × ${x.qty} = <b>${money(p.price*x.qty)}</b></p>`}).join("");
+}
+
+function previewSlip(e){
+ const file=e.target.files[0],img=document.getElementById("slipPreview");
+ if(file){img.src=URL.createObjectURL(file);img.style.display="block";}
+}
+
+function submitOrder(){
+ if(!cart.length){alert("ກະລຸນາເລືອກສິນຄ້າກ່ອນ.");showPage("shop");return;}
+ const ids=["name","phone","branch","village","district","province"];
+ for(const id of ids){if(!document.getElementById(id).value.trim()){alert("ກະລຸນາຕື່ມຂໍ້ມູນໃຫ້ຄົບ.");document.getElementById(id).focus();return;}}
+ alert("ຮັບອໍເດີແລ້ວ ✅\nໝາຍເຫດ: ໜ້າ HTML ນີ້ເປັນແບບທົດລອງ ຍັງບໍ່ໄດ້ສົ່ງອໍເດີໄປຫາເຈົ້າຂອງຮ້ານຈິງ.");
+}
+
+renderHome();renderShop();saveCart();
+</script>
+</body>
+</html>
